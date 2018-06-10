@@ -18,7 +18,7 @@ export default class Unlock extends React.Component {
 
   componentDidMount() {
     this.interval = setInterval(() => {
-      var params = {
+      var stake = {
         json: true,
         scope: "eosio",
         code: "eosio",
@@ -26,7 +26,7 @@ export default class Unlock extends React.Component {
         limit: 500
       }
 
-      this.eosClient.getTableRows(params).then((table)=>{
+      this.eosClient.getTableRows(stake).then((table)=>{
         this.setState({total_vote: table.rows[0].total_activated_stake})
       });
     }, 1000);
@@ -37,7 +37,9 @@ export default class Unlock extends React.Component {
   }
 
   render() {
-    return (<div><strong>Unlock Tracker:</strong> {(this.state.total_vote/1000/1000000).toFixed(3)} M of 150.0 M votes complete. {((this.state.total_vote/1000/1000000/150)*100).toFixed(1)}% of the way there!</div>);
+    return (
+      <div><strong>Unlock Tracker:</strong> {(this.state.total_vote/10000/1000000).toFixed(3)} M of 150.0 M votes complete. {((this.state.total_vote/10000/1000000/150)*100).toFixed(1)}% of the way there!</div>
+    );
   }
 }
 module.hot.accept();
