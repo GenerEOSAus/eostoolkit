@@ -41,6 +41,14 @@ export default class AccountCreate extends React.Component {
 
   }
 
+  getNameValidation() {
+    const name = this.state.name;
+    let regEx = new RegExp("^([a-z1-5]){12,}$");
+    if (name.length == 12 && regEx.test(name)) return 'success'
+    else return 'error';
+    return null;
+  }
+
   handleActive(e) {
     this.setState({ active: e.target.value });
   }
@@ -138,7 +146,7 @@ export default class AccountCreate extends React.Component {
               onChange={this.handleCreator}
             />
           </FormGroup>
-          <FormGroup>
+          <FormGroup validationState={this.getNameValidation()}>
             <ControlLabel>Account Name</ControlLabel>{' '}
             <FormControl
               type="text"
@@ -146,6 +154,7 @@ export default class AccountCreate extends React.Component {
               placeholder="Account Name (12 characters using a-z and 1-5 only)"
               onChange={this.handleName}
             />
+            <FormControl.Feedback />
           </FormGroup>
           <FormGroup>
             <ControlLabel>Owner Key</ControlLabel>{' '}

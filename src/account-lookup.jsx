@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import update from 'react-addons-update';
 import { Grid, Row, Col, Panel, Form, FormGroup, FormControl, ControlLabel, HelpBlock,ListGroup,ListGroupItem, Button, ProgressBar, Alert, Table,Label } from 'react-bootstrap';
-import { EosClient } from './scatter-client.jsx';
+import EosClient from './eos-client.jsx';
 
 export default class AccountLookup extends React.Component {
   constructor(props, context) {
@@ -17,14 +17,8 @@ export default class AccountLookup extends React.Component {
       pubkey: '',
       name: '',
       accounts: [],
-      eos: null
+      eos: EosClient()
     };
-
-    document.addEventListener('scatterLoaded', scatterExtension => {
-      console.log('Scatter connected')
-      let client = EosClient();
-      this.setState({ eos: client});
-    })
   }
 
   handlePubkey(e) {
