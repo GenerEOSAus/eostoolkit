@@ -52,6 +52,7 @@ class Toolkit extends React.Component {
           </Panel.Heading>
           <Panel.Body><VoteGenereos/></Panel.Body>
         </Panel>
+        <p style={{float: 'right'}}>Copywrite &copy; GenerEOS 2018 | <a href="https://www.genereos.io" target="new">Website</a> | <a href="https://github.com/genereos/eostoolkit" target="new">GitHub</a></p>
       </div>
     );
   }
