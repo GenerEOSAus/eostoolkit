@@ -2,9 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import update from 'react-addons-update';
 import { Grid, Row, Col, Panel, Form, FormGroup, FormControl, ControlLabel, HelpBlock,ListGroup,ListGroupItem, Button, ProgressBar, Alert, Table } from 'react-bootstrap';
-import EosClient from './eos-client.jsx';
+import { EosClient } from './scatter-client.jsx';
 
-export default class PubkeyLookupForm extends React.Component {
+export default class AccountLookup extends React.Component {
   constructor(props, context) {
     super(props, context);
 
@@ -16,10 +16,15 @@ export default class PubkeyLookupForm extends React.Component {
       error: false,
       pubkey: '',
       name: '',
-      accounts: []
+      accounts: [],
+      eos: null
     };
 
-    this.eosClient = EosClient();
+    document.addEventListener('scatterLoaded', scatterExtension => {
+      console.log('Scatter connected')
+      let client = EosClient();
+      this.setState({ eos: client});
+    })
   }
 
   handlePubkey(e) {
@@ -34,7 +39,7 @@ export default class PubkeyLookupForm extends React.Component {
     e.preventDefault();
     this.setState({accounts:[]});
     this.setState({loading:true, error:false});
-    this.eosClient.getKeyAccounts(this.state.pubkey).then((data) => {
+    this.state.eos.getKeyAccounts(this.state.pubkey).then((data) => {
       data.account_names.map((name) => {this.getAccountDetail(name)});
     }).catch((e) => {
       console.error(e);
@@ -50,8 +55,8 @@ export default class PubkeyLookupForm extends React.Component {
   }
 
   getAccountDetail(name) {
-    this.eosClient.getAccount(name).then((data) => {
-      this.eosClient.getCurrencyBalance('eosio.token',name).then((currency) => {
+    this.state.eos.getAccount(name).then((data) => {
+      this.state.eos.getCurrencyBalance('eosio.token',name).then((currency) => {
         data.currency = currency;
         console.log(data);
         const newAccounts = update(this.state.accounts, {$push: [
@@ -66,9 +71,9 @@ export default class PubkeyLookupForm extends React.Component {
   }
 
   renderAccount(account) {
-    const cpu = Number(account.delegated_bandwidth.cpu_weight.slice(0,-4));
-    const net = Number(account.delegated_bandwidth.net_weight.slice(0,-4));
-    const eos = Number(account.currency[0].slice(0,-4));
+    const cpu = Number(account.self_delegated_bandwidth ? account.self_delegated_bandwidth.cpu_weight.slice(0,-4) : 0);
+    const net = Number(account.self_delegated_bandwidth ? account.self_delegated_bandwidth.net_weight.slice(0,-4) : 0);
+    const eos = Number(account.currency[0] ? account.currency[0].slice(0,-4) : 0);
 
     return (
       // <ListGroupItem key={account.account_name}>{account.account_name}</ListGroupItem>
