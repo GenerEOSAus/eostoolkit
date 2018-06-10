@@ -5,6 +5,8 @@ import update from 'react-addons-update';
 import { Panel } from 'react-bootstrap';
 import AccountLookup from './account-lookup.jsx'
 import AccountCreate from './account-create.jsx'
+import ManageProxy from './manage-proxy.jsx'
+import VoteGenereos from './vote-genereos.jsx'
 import { ScatterConnect } from './scatter-client.jsx'
 
 
@@ -37,6 +39,18 @@ class Toolkit extends React.Component {
             <Panel.Title componentClass="h3">Create Account</Panel.Title>
           </Panel.Heading>
           <Panel.Body><AccountCreate/></Panel.Body>
+        </Panel>
+        <Panel bsStyle="primary">
+          <Panel.Heading>
+            <Panel.Title componentClass="h3">Proxy Management</Panel.Title>
+          </Panel.Heading>
+          <Panel.Body><ManageProxy/></Panel.Body>
+        </Panel>
+        <Panel bsStyle="primary">
+          <Panel.Heading>
+            <Panel.Title componentClass="h3">Vote</Panel.Title>
+          </Panel.Heading>
+          <Panel.Body><VoteGenereos/></Panel.Body>
         </Panel>
       </div>
     );
