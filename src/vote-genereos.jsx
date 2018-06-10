@@ -40,7 +40,6 @@ export default class VoteGenereos extends React.Component {
     }).then((data) => {
       console.log(data);
       this.setState({loading:false, error:false});
-      this.resetForms();
     }).catch((e) => {
       console.error(e);
       this.setState({loading:false, error:true});

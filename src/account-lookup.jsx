@@ -79,7 +79,7 @@ export default class AccountLookup extends React.Component {
       // <ListGroupItem key={account.account_name}>{account.account_name}</ListGroupItem>
       <Panel bsStyle="info" key={account.account_name}>
         <Panel.Heading>
-          <Panel.Title componentClass="h3"><b>{account.account_name}</b> {account.voter_info.is_proxy == 1 ? (<Label>Proxy</Label>) : ('')}<div style={{float:'right'}}>{cpu+net+eos} EOS</div></Panel.Title>
+          <Panel.Title componentClass="h3"><b>{account.account_name}</b><div style={{float:'right'}}>{cpu+net+eos} EOS</div></Panel.Title>
         </Panel.Heading>
         <Panel.Body>
         <div>

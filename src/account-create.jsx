@@ -79,8 +79,8 @@ export default class AccountCreate extends React.Component {
       active: '',
       name: '',
       creator: '',
-      net: 1,
-      cpu: 1,
+      net: 0.1,
+      cpu: 0.1,
       ram: 8192,
       transfer: true,
     });
