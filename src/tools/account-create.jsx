@@ -20,6 +20,7 @@ export default class AccountCreate extends React.Component {
     this.state = {
       loading: false,
       error: false,
+      reason: '',
       owner: '',
       active: '',
       name: '',
@@ -100,7 +101,7 @@ export default class AccountCreate extends React.Component {
 
   createAccount(e) {
     e.preventDefault();
-    this.setState({loading:true, error:false});
+    this.setState({loading:true, error:false, reason:''});
     this.state.eos.transaction(tr => {
       tr.newaccount({
         creator: this.state.creator,
@@ -125,9 +126,14 @@ export default class AccountCreate extends React.Component {
       this.setState({loading:false, error:false});
       this.resetForm();
     }).catch((e) => {
-      let taken = e.contains("name is already taken");
-      console.error(taken);
+      let error = JSON.stringify(e);
       this.setState({loading:false, error:true});
+
+      if(error.includes('name is already taken')) {
+        this.setState({reason:'Someone already owns that name.'});
+      } else if(error.includes('Missing required accounts')) {
+        this.setState({reason:'Incorrect scatter account - please review chain id, network, and account name.'});
+      }
     });
   }
 
@@ -217,7 +223,7 @@ export default class AccountCreate extends React.Component {
         <div style={{paddingTop: '2em'}}>
           {isError ? (
             <Alert bsStyle="warning">
-              <strong>Error occured.</strong> That name may be already taken or you provided invalid inputs.
+              <strong>Transaction failed. {this.state.reason}</strong>
             </Alert>
           ) : (
             isLoading ? (

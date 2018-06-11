@@ -14,6 +14,8 @@ export default class CreateBid extends React.Component {
     this.state = {
       loading: false,
       error: false,
+      success: '',
+      reason: '',
       bidder: '',
       name: '',
       bid: 0.0001,
@@ -47,7 +49,7 @@ export default class CreateBid extends React.Component {
 
   createBid(e) {
     e.preventDefault();
-    this.setState({loading:true, error:false});
+    this.setState({loading:true, error:false, reason:''});
     this.state.eos.transaction(tr => {
       tr.bidname({
         bidder: this.state.bidder,
@@ -58,8 +60,14 @@ export default class CreateBid extends React.Component {
       console.log(data);
       this.setState({loading:false, error:false});
     }).catch((e) => {
-      console.error(e);
+      let error = JSON.stringify(e);
       this.setState({loading:false, error:true});
+
+      if(error.includes('must increase bid by 10%')) {
+        this.setState({reason:'Increase bid by 10%'});
+      } else if(error.includes('Missing required accounts')) {
+        this.setState({reason:'Incorrect scatter account - please review chain id, network, and account name.'});
+      }
     });
   }
 
@@ -103,11 +111,11 @@ export default class CreateBid extends React.Component {
         <div style={{paddingTop: '2em'}}>
           {isError ? (
             <Alert bsStyle="warning">
-              <strong>Transaction failed.</strong>
+              <strong>Transaction failed. {this.state.reason}</strong>
             </Alert>
           ) : (
             isLoading ? (
-              <ProgressBar active now={100} label='Querying Network'/>
+              <ProgressBar active now={100} label='Sending Transaction'/>
             ) : (
               <div/>
             )
