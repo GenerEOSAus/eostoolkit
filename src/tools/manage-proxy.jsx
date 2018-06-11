@@ -1,6 +1,6 @@
 import React from 'react'
 import update from 'react-addons-update';
-import { Grid, Row, Col, Panel, Form, FormGroup, FormControl, ControlLabel, HelpBlock,ListGroup,ListGroupItem, Button, ProgressBar, Alert, Table } from 'react-bootstrap';
+import { Grid, Row, Col, Panel, Form, FormGroup, FormControl, ControlLabel, HelpBlock,ListGroup,ListGroupItem, Button, ProgressBar, Alert, Table, OverlayTrigger,Popover } from 'react-bootstrap';
 import { EosClient } from '../scatter-client.jsx';
 
 export default class ManageProxy extends React.Component {
@@ -95,6 +95,24 @@ export default class ManageProxy extends React.Component {
   render() {
     const isError = this.state.error;
     const isLoading = this.state.loading;
+
+
+    const contract = (
+      <Popover id="popover-positioned-left" title="voteproducer">
+      <strong>Action - {'{ voteproducer }'}</strong><br/>
+      <strong>Description</strong><br/>
+      The intent of the {'{ voteproducer }'} action is to cast a valid vote for up to 30 BP candidates.
+<br/><br/>
+      As an authorized party I {'{ signer }'} wish to vote on behalf of {'{ voter }'} in favor of the block producer candidates {'{ producers }'} with a voting weight equal to all tokens currently owned by {'{ voter }'} and staked for CPU or bandwidth.
+<br/><br/>
+      If I am not the beneficial owner of these shares I stipulate I have proof that I’ve been authorized to vote these shares by their beneficial owner(s).
+<br/><br/>
+      I stipulate I have not and will not accept anything of value in exchange for these votes, on penalty of confiscation of these tokens, and other penalties.
+<br/><br/>
+      I acknowledge that using any system of automatic voting, re-voting, or vote refreshing, or allowing such a system to be used on my behalf or on behalf of another, is forbidden and doing so violates this contract.
+      </Popover>
+    );
+
     return (
       <div>
         <Alert bsStyle="info"><strong>Register as Proxy:</strong> You will vote on behalf of others.</Alert>
@@ -111,7 +129,10 @@ export default class ManageProxy extends React.Component {
           </FormGroup>{' '}
           <Button type="submit" onClick={this.regProxy.bind(this)}>Become Proxy</Button>
         </Form>
-        <Alert bsStyle="info"><strong>Set a Proxy:</strong> They will vote on your behalf.</Alert>
+        <Alert bsStyle="info"><span><strong>Set a Proxy:</strong> They will vote on your behalf.</span>
+          <OverlayTrigger trigger="click" placement="left" overlay={contract}>
+            <Button bsStyle="warning" style={{float:'right',marginTop:'-0.5em'}}>Read Contract</Button>
+          </OverlayTrigger></Alert>
         <Form inline style={{paddingTop: '1em'}}>
           <FormGroup style={{width: '70%'}}>
             <ControlLabel style={{width: '25%'}}>Your Account Name</ControlLabel>{' '}
@@ -134,6 +155,7 @@ export default class ManageProxy extends React.Component {
             />
           </FormGroup>{' '}
           <Button type="submit" onClick={this.setProxy.bind(this)}>Set Proxy</Button>
+
         </Form>
         <div style={{paddingTop: '2em'}}>
           {isError ? (

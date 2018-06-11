@@ -1,6 +1,6 @@
 import React from 'react'
 import update from 'react-addons-update';
-import { Grid, Row, Col, Panel, Form, FormGroup, FormControl, ControlLabel, HelpBlock,ListGroup,ListGroupItem, Button, ProgressBar, Alert, Table } from 'react-bootstrap';
+import { Grid, Row, Col, Panel, Form, FormGroup, FormControl, ControlLabel, HelpBlock,ListGroup,ListGroupItem, Button, ProgressBar, Alert, Table, Popover, OverlayTrigger } from 'react-bootstrap';
 import { EosClient } from '../scatter-client.jsx';
 
 export default class CreateBid extends React.Component {
@@ -76,6 +76,17 @@ export default class CreateBid extends React.Component {
   render() {
     const isError = this.state.error;
     const isLoading = this.state.loading;
+
+    const contract = (
+      <Popover id="popover-positioned-right" title="bidname">
+        <strong>Action - {'{ bidname }'}</strong><br/>
+        <strong>Description</strong><br/>
+        The {'{ bidname }'} action places a bid on a premium account name, in the knowledge that the high bid will purchase the name.<br/>
+        <br/>
+        As an authorized party I {'{ signer }'} wish to bid on behalf of {'{ bidder }'} the amount of {'{ bid }'} toward purchase of the account name {'{ newname }'}.
+      </Popover>
+    );
+
     return (
       <div>
         <Form style={{paddingTop: '1em'}}>
@@ -107,6 +118,9 @@ export default class CreateBid extends React.Component {
               />
           </FormGroup>{' '}
           <Button type="submit" onClick={this.createBid.bind(this)}>Bid on Name</Button>
+          <OverlayTrigger trigger="click" placement="right" overlay={contract}>
+            <Button bsStyle="warning">Read Contract</Button>
+          </OverlayTrigger>
         </Form>
         <div style={{paddingTop: '2em'}}>
           {isError ? (

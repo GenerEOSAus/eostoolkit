@@ -1,7 +1,7 @@
 import React from 'react'
 import update from 'react-addons-update';
 import Eos from 'eosjs'
-import { Grid, Row, Col, Panel, Form, FormGroup, FormControl, ControlLabel, HelpBlock,ListGroup,ListGroupItem, Button, ProgressBar, Alert, Table, Checkbox } from 'react-bootstrap';
+import { Grid, Row, Col, Panel, Form, FormGroup, FormControl, ControlLabel, HelpBlock,ListGroup,ListGroupItem, Button, ProgressBar, Alert, Table, Checkbox,Popover,OverlayTrigger } from 'react-bootstrap';
 import { EosClient } from '../scatter-client.jsx';
 
 export default class AccountCreate extends React.Component {
@@ -101,7 +101,7 @@ export default class AccountCreate extends React.Component {
 
   createAccount(e) {
     e.preventDefault();
-    this.setState({loading:true, error:false, reason:''});
+    this.setState({loading:true, error:false, reason:''});1
     this.state.eos.transaction(tr => {
       tr.newaccount({
         creator: this.state.creator,
@@ -144,8 +144,20 @@ export default class AccountCreate extends React.Component {
     const isError = this.state.error;
     const isLoading = this.state.loading;
 
+    const contract = (
+      <Popover id="popover-positioned-right" title="newaccount">
+      <strong>Action</strong> - {'{ newaccount }'}<br/>
+      <strong>Description</strong><br/>
+      The {'{ newaccount }'} action creates a new account.<br/>
+      <br/>
+      As an authorized party I {'{ signer }'} wish to exercise the authority of {'{ creator }'} to create a new account on this system named {'{ name }'} such that the new account's owner public key shall be {'{ owner }'} and the active public key shall be {'{ active }'}.
+
+      </Popover>
+    );
+
     return (
       <div>
+
         <Form>
           <FormGroup>
             <ControlLabel>Creator Name (Must be linked to your Scatter)</ControlLabel>{' '}
@@ -219,6 +231,9 @@ export default class AccountCreate extends React.Component {
             </Checkbox>
           </FormGroup>
           <Button type="submit" onClick={this.createAccount.bind(this)}>Create</Button>
+          <OverlayTrigger trigger="click" placement="right" overlay={contract}>
+            <Button bsStyle="warning">Read Contract</Button>
+          </OverlayTrigger>
         </Form>
         <div style={{paddingTop: '2em'}}>
           {isError ? (
