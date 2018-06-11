@@ -37,14 +37,11 @@ export default class BidTable extends React.Component {
 
     this.eosClient.getTableRows(bids).then((table)=>{
       this.setState({data: table.rows,loading:false});
-      console.log(table.rows)
     });
   }
 
   formatDate(date) {
-    console.log(date);
     let newDate = new Date(date/1000);
-    console.log(newDate.toUTCString());
     return newDate.toUTCString();
   }
 
@@ -66,7 +63,10 @@ export default class BidTable extends React.Component {
             },
             {
               Header: "High Bid",
-              accessor: "high_bid"
+              accessor: "high_bid",
+              Cell: row => (
+                <span>{(row.value/10000)} EOS</span>
+              )
             },
             {
               Header: "Last Bid Time",

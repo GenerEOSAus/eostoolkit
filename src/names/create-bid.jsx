@@ -3,19 +3,22 @@ import update from 'react-addons-update';
 import { Grid, Row, Col, Panel, Form, FormGroup, FormControl, ControlLabel, HelpBlock,ListGroup,ListGroupItem, Button, ProgressBar, Alert, Table } from 'react-bootstrap';
 import { EosClient } from '../scatter-client.jsx';
 
-export default class VoteGenereos extends React.Component {
+export default class CreateBid extends React.Component {
   constructor(props, context) {
     super(props, context);
 
-    this.handleSetName = this.handleSetName.bind(this);
+    this.handleBidder = this.handleBidder.bind(this);
+    this.handleName = this.handleName.bind(this);
+    this.handleBid = this.handleBid.bind(this);
 
     this.state = {
       loading: false,
       error: false,
-      setName: '',
+      bidder: '',
+      name: '',
+      bid: 0.0001,
       eos: null
     };
-
 
     document.addEventListener('scatterLoaded', scatterExtension => {
       console.log('Scatter connected')
@@ -30,18 +33,26 @@ export default class VoteGenereos extends React.Component {
     }
   }
 
-  handleSetName(e) {
-    this.setState({ setName: e.target.value });
+  handleBidder(e) {
+    this.setState({ bidder: e.target.value });
   }
 
-  vote(e) {
+  handleName(e) {
+    this.setState({ name: e.target.value });
+  }
+
+  handleBid(e) {
+    this.setState({ bid: e.target.value });
+  }
+
+  createBid(e) {
     e.preventDefault();
     this.setState({loading:true, error:false});
     this.state.eos.transaction(tr => {
-      tr.voteproducer({
-        voter: this.state.setName,
-        proxy: "",
-        producers: ['aus1genereos'],
+      tr.bidname({
+        bidder: this.state.bidder,
+        newname: this.state.name,
+        bid: this.state.bid + ' EOS',
       })
     }).then((data) => {
       console.log(data);
@@ -59,22 +70,35 @@ export default class VoteGenereos extends React.Component {
     const isLoading = this.state.loading;
     return (
       <div>
-        <Alert bsStyle="info"><strong>A vote for GenerEOS is a vote for Charity</strong></Alert>
-        <p>If you wish to vote for a full set of 30 block producers we encourage you to use <a href="http://eosportal.io" target="new">EOS Portal</a>.<br/>
-        However, if you would like to support us directly please use this form.<br/>
-        You can read about our charitiable goals on our <a href="https://steemit.com/eos/@genereos/eos-vote-for-the-community-vote-for-charity" target="new">steemit article</a>.</p>
-        <Form inline style={{paddingTop: '1em', paddingBottom: '1em'}}>
-          <FormGroup style={{width: '70%'}}>
-            <ControlLabel style={{width: '25%'}}>Your Account Name</ControlLabel>{' '}
+        <Form style={{paddingTop: '1em'}}>
+          <FormGroup>
+            <ControlLabel>Your Account Name (the Bidder)</ControlLabel>{' '}
             <FormControl
               type="text"
-              value={this.state.setName}
+              value={this.state.bidder}
               placeholder="Account Name - Linked to Scatter"
-              onChange={this.handleSetName}
-              style={{width: '70%'}}
+              onChange={this.handleBidder}
             />
+          </FormGroup>
+          <FormGroup>
+            <ControlLabel>Premium Name to Bid On</ControlLabel>{' '}
+            <FormControl
+              type="text"
+              value={this.state.name}
+              placeholder="Account Name"
+              onChange={this.handleName}
+            />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Bid Amount (in EOS)</ControlLabel>{' '}
+              <FormControl
+                type="text"
+                value={this.state.bid}
+                placeholder="Account Name"
+                onChange={this.handleBid}
+              />
           </FormGroup>{' '}
-          <Button type="submit" onClick={this.vote.bind(this)}>Vote for GenerEOS</Button>
+          <Button type="submit" onClick={this.createBid.bind(this)}>Bid on Name</Button>
         </Form>
         <div style={{paddingTop: '2em'}}>
           {isError ? (

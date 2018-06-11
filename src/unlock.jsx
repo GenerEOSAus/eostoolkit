@@ -11,8 +11,6 @@ export default class Unlock extends React.Component {
     this.state = {
       total_vote: 0,
     }
-
-
   }
 
   componentDidMount() {

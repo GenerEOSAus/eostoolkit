@@ -20,11 +20,18 @@ export default class ManageProxy extends React.Component {
       eos: null
     };
 
+
     document.addEventListener('scatterLoaded', scatterExtension => {
       console.log('Scatter connected')
       let client = EosClient();
       this.setState({ eos: client});
-    })
+    });
+  }
+
+  componentDidMount() {
+    if(window.scatter !== undefined) {
+      this.setState({ eos: EosClient()});
+    }
   }
 
   handleRegProxy(e) {
