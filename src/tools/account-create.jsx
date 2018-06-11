@@ -1,9 +1,8 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
 import update from 'react-addons-update';
 import Eos from 'eosjs'
 import { Grid, Row, Col, Panel, Form, FormGroup, FormControl, ControlLabel, HelpBlock,ListGroup,ListGroupItem, Button, ProgressBar, Alert, Table, Checkbox } from 'react-bootstrap';
-import { EosClient } from './scatter-client.jsx';
+import { EosClient } from '../scatter-client.jsx';
 
 export default class AccountCreate extends React.Component {
   constructor(props, context) {
@@ -37,8 +36,6 @@ export default class AccountCreate extends React.Component {
       let client = EosClient();
       this.setState({ eos: client});
     })
-
-
   }
 
   getNameValidation() {
