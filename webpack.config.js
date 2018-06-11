@@ -6,7 +6,7 @@ module.exports = {
     rules: [{ test: /\.(js|jsx)$/, exclude: /node_modules/, use: ['babel-loader'] }]
   },
   resolve: { extensions: ['*', '.js', '.jsx'] },
-  output: { path: __dirname + '/dist', publicPath: '/', filename: 'bundle.js' },
-  plugins: [ new webpack.HotModuleReplacementPlugin() ],
+  output: { path: __dirname + '/dist', publicPath: '/', filename: '[name].[chunkhash].js' },
+  plugins: [ new webpack.HotModuleReplacementPlugin(),new HtmlWebpackPlugin({title: 'Caching'}) ],
   devServer: { contentBase: './dist', hot: true }
 };

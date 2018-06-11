@@ -11,7 +11,7 @@
     "start": "webpack-dev-server --config webpack.config.js --mode development",
     "test": "echo \"No test specified\" && exit 0",
     "build": "npm run clean && npm run compile",
-    "clean": "rm -rf ./dist/bundle.js",
+    "clean": "rm -rf ./dist/*.js",
     "compile": "NODE_ENV=production webpack --config ./webpack.config.js --progress"
   },
   "keywords": [
