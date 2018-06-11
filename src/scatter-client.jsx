@@ -11,6 +11,13 @@ const network = {
     chainId:"aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906", // Or null to fetch automatically ( takes longer )
 }
 
+const httpNetwork = {
+    blockchain:'eos',
+    host:'mainnet.genereos.io', // ( or null if endorsed chainId )
+    port:80, // ( or null if defaulting to 80 )
+    chainId:"aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906", // Or null to fetch automatically ( takes longer )
+}
+
 const eosOptions = {
     broadcast: true,
     sign: true,
@@ -45,7 +52,7 @@ export class ScatterConnect extends React.Component {
   }
 
   connectIdentity() {
-    this.state.scatter.suggestNetwork(network).then(() => {
+    this.state.scatter.suggestNetwork(httpNetwork).then(() => {
       console.log('Network attached');
       this.state.scatter.getIdentity().then(() => {
         console.log('Attach Identity');
