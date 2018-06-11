@@ -63,6 +63,30 @@ export default class AccountLookup extends React.Component {
     })
   }
 
+  renderPermission(permission) {
+    const keys = permission.required_auth.keys.map((k)=>{
+      let key = {
+        perm_name: permission.perm_name,
+        key: k.key,
+        weight: k.weight,
+      }
+      return key;
+    });
+    const renderKey = (k) => {
+      return (
+        <tr key={k.perm_name}>
+          <td>{k.perm_name}</td>
+          <td>{k.key}</td>
+          <td>{k.weight}</td>
+        </tr>
+      );
+    }
+    return (
+        keys.map(renderKey.bind(this))
+    );
+    return(<tr><td>test</td></tr>);
+  }
+
   renderAccount(account) {
     const cpu = Number(account.self_delegated_bandwidth ? account.self_delegated_bandwidth.cpu_weight.slice(0,-4) : 0);
     const net = Number(account.self_delegated_bandwidth ? account.self_delegated_bandwidth.net_weight.slice(0,-4) : 0);
@@ -115,8 +139,31 @@ export default class AccountLookup extends React.Component {
                 </Table>
               </Col>
             </Row>
+            <Row className="show-grid">
+              <Col md={10} sm={4}>
+                <Table responsive striped>
+                  <thead>
+                    <tr>
+                      <th>Permission</th>
+                      <th>Key</th>
+                      <th>Weight</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {account.permissions.map(this.renderPermission.bind(this))}
+                  </tbody>
+                </Table>
+              </Col>
+            </Row>
+            <Row className="show-grid">
+              <Col md={10} sm={4}>
+                <h3>Votes:</h3>
+                <p>{account.voter_info.producers.join(',')}</p>
+              </Col>
+            </Row>
           </Grid>
-</div>
+
+          </div>
 
         </Panel.Body>
       </Panel>
