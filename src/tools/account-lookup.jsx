@@ -158,7 +158,7 @@ export default class AccountLookup extends React.Component {
             <Row className="show-grid">
               <Col md={10} sm={4}>
                 <h3>Votes:</h3>
-                <p>{account.voter_info.producers.join(',')}</p>
+                <p>{account.voter_info ? account.voter_info.producers.join(',') : ''}</p>
               </Col>
             </Row>
           </Grid>
