@@ -140,7 +140,7 @@ export default class AccountLookup extends React.Component {
               </Col>
             </Row>
             <Row className="show-grid">
-              <Col md={10} sm={4}>
+              <Col md={10}>
                 <Table responsive striped>
                   <thead>
                     <tr>
