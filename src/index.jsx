@@ -9,7 +9,7 @@ import ManageProxy from './manage-proxy.jsx'
 import VoteGenereos from './vote-genereos.jsx'
 import Unlock from './unlock.jsx'
 import { ScatterConnect } from './scatter-client.jsx'
-
+import './theme.css';
 
 
 
