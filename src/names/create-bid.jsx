@@ -113,7 +113,7 @@ export default class CreateBid extends React.Component {
 
     return (
       <div>
-        <Alert bsStyle="danger"><strong>Important notice!</strong> Any successful bid is non-refundable. If you get outbid your previous bids will NOT be returned.</Alert>
+        <Alert bsStyle="warning"><strong>Important notice!</strong> Your bid is transferred immediately. Your bid will be returned if you are outbid.</Alert>
         <Form style={{paddingTop: '1em'}}>
           <FormGroup>
             <ControlLabel>Your Account Name (the Bidder)</ControlLabel>{' '}
