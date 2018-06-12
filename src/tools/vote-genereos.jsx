@@ -12,6 +12,7 @@ export default class VoteGenereos extends React.Component {
     this.state = {
       loading: false,
       error: false,
+      success: '',
       setName: '',
       eos: null
     };
@@ -36,7 +37,7 @@ export default class VoteGenereos extends React.Component {
 
   vote(e) {
     e.preventDefault();
-    this.setState({loading:true, error:false});
+    this.setState({loading:true, error:false, success: ''});
     this.state.eos.transaction(tr => {
       tr.voteproducer({
         voter: this.state.setName,
@@ -44,11 +45,15 @@ export default class VoteGenereos extends React.Component {
         producers: ['aus1genereos'],
       })
     }).then((data) => {
-      console.log(data);
-      this.setState({loading:false, error:false});
+      console.log(data.transaction_id);
+      this.resetForms();
+      this.setState({loading:false, error:false, success: data.transaction_id});
     }).catch((e) => {
-      console.error(e);
+      let error = JSON.stringify(e);
       this.setState({loading:false, error:true});
+      if(error.includes('Missing required accounts')) {
+        this.setState({reason:'Incorrect scatter account - please review chain id, network, and account name.'});
+      }
     });
   }
 
@@ -57,21 +62,46 @@ export default class VoteGenereos extends React.Component {
   render() {
     const isError = this.state.error;
     const isLoading = this.state.loading;
+    const isSuccess = this.state.success;
+
     const contract = (
       <Popover id="popover-positioned-left" title="voteproducer">
-      <strong>Action - {'{ voteproducer }'}</strong><br/>
-      <strong>Description</strong><br/>
-      The intent of the {'{ voteproducer }'} action is to cast a valid vote for up to 30 BP candidates.
-<br/><br/>
-      As an authorized party I {'{ signer }'} wish to vote on behalf of {'{ voter }'} in favor of the block producer candidates {'{ producers }'} with a voting weight equal to all tokens currently owned by {'{ voter }'} and staked for CPU or bandwidth.
-<br/><br/>
-      If I am not the beneficial owner of these shares I stipulate I have proof that I’ve been authorized to vote these shares by their beneficial owner(s).
-<br/><br/>
-      I stipulate I have not and will not accept anything of value in exchange for these votes, on penalty of confiscation of these tokens, and other penalties.
-<br/><br/>
-      I acknowledge that using any system of automatic voting, re-voting, or vote refreshing, or allowing such a system to be used on my behalf or on behalf of another, is forbidden and doing so violates this contract.
+        <strong>Action - {'{ voteproducer }'}</strong><br/>
+        <strong>Description</strong><br/>
+        The intent of the {'{ voteproducer }'} action is to cast a valid vote for up to 30 BP candidates.
+        <br/><br/>
+        As an authorized party I {'{ signer }'} wish to vote on behalf of {'{ voter }'} in favor of the block producer candidates {'{ producers }'} with a voting weight equal to all tokens currently owned by {'{ voter }'} and staked for CPU or bandwidth.
+        <br/><br/>
+        If I am not the beneficial owner of these shares I stipulate I have proof that I’ve been authorized to vote these shares by their beneficial owner(s).
+        <br/><br/>
+        I stipulate I have not and will not accept anything of value in exchange for these votes, on penalty of confiscation of these tokens, and other penalties.
+        <br/><br/>
+        I acknowledge that using any system of automatic voting, re-voting, or vote refreshing, or allowing such a system to be used on my behalf or on behalf of another, is forbidden and doing so violates this contract.
       </Popover>
     );
+
+    const RenderStatus = () => {
+      if(isError) {
+        return (
+          <Alert bsStyle="warning">
+            <strong>Transaction failed. {this.state.reason}</strong>
+          </Alert>
+        );
+      }
+
+      if(isLoading) {
+        return(<ProgressBar active now={100} label='Sending Transaction'/>);
+      }
+
+      if(isSuccess !== '') {
+        return (
+          <Alert bsStyle="success">
+            <strong>Transaction sent. TxId: {isSuccess}</strong>
+          </Alert>
+        );
+      }
+      return('');
+    }
 
     return (
       <div>
@@ -96,17 +126,7 @@ export default class VoteGenereos extends React.Component {
           <Button type="submit" onClick={this.vote.bind(this)}>Vote for GenerEOS</Button>
         </Form>
         <div style={{paddingTop: '2em'}}>
-          {isError ? (
-            <Alert bsStyle="warning">
-              <strong>Transaction failed.</strong>
-            </Alert>
-          ) : (
-            isLoading ? (
-              <ProgressBar active now={100} label='Querying Network'/>
-            ) : (
-              <div/>
-            )
-          )}
+          <RenderStatus/>
         </div>
       </div>
     );

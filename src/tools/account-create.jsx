@@ -21,6 +21,7 @@ export default class AccountCreate extends React.Component {
       loading: false,
       error: false,
       reason: '',
+      success: '',
       owner: '',
       active: '',
       name: '',
@@ -101,7 +102,7 @@ export default class AccountCreate extends React.Component {
 
   createAccount(e) {
     e.preventDefault();
-    this.setState({loading:true, error:false, reason:''});1
+    this.setState({loading:true, error:false, reason:'', success:''});1
     this.state.eos.transaction(tr => {
       tr.newaccount({
         creator: this.state.creator,
@@ -123,8 +124,7 @@ export default class AccountCreate extends React.Component {
       })
     }).then((data) => {
       console.log(data.transaction_id);
-      this.setState({loading:false, error:false});
-      this.resetForm();
+      this.setState({loading:false, error:false, success: data.transaction_id});
     }).catch((e) => {
       let error = JSON.stringify(e);
       this.setState({loading:false, error:true});
@@ -143,6 +143,7 @@ export default class AccountCreate extends React.Component {
   render() {
     const isError = this.state.error;
     const isLoading = this.state.loading;
+    const isSuccess = this.state.success;
 
     const contract = (
       <Popover id="popover-positioned-right" title="newaccount">
@@ -154,6 +155,29 @@ export default class AccountCreate extends React.Component {
 
       </Popover>
     );
+
+    const RenderStatus = () => {
+      if(isError) {
+        return (
+          <Alert bsStyle="warning">
+            <strong>Transaction failed. {this.state.reason}</strong>
+          </Alert>
+        );
+      }
+
+      if(isLoading) {
+        return(<ProgressBar active now={100} label='Sending Transaction'/>);
+      }
+
+      if(isSuccess !== '') {
+        return (
+          <Alert bsStyle="success">
+            <strong>Transaction sent. TxId: {isSuccess}</strong>
+          </Alert>
+        );
+      }
+      return('');
+    }
 
     return (
       <div>
@@ -236,15 +260,7 @@ export default class AccountCreate extends React.Component {
           </OverlayTrigger>
         </Form>
         <div style={{paddingTop: '2em'}}>
-          {isError ? (
-            <Alert bsStyle="warning">
-              <strong>Transaction failed. {this.state.reason}</strong>
-            </Alert>
-          ) : (
-            isLoading ? (
-              <ProgressBar active now={100} label='Sending Transaction'/>
-            ) : (<div/>)
-          )}
+          <RenderStatus/>
         </div>
 
       </div>

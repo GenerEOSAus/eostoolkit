@@ -76,6 +76,7 @@ export default class CreateBid extends React.Component {
   render() {
     const isError = this.state.error;
     const isLoading = this.state.loading;
+    const isSuccess = this.state.success;
 
     const contract = (
       <Popover id="popover-positioned-right" title="bidname">
@@ -87,8 +88,32 @@ export default class CreateBid extends React.Component {
       </Popover>
     );
 
+    const RenderStatus = () => {
+      if(isError) {
+        return (
+          <Alert bsStyle="warning">
+            <strong>Transaction failed. {this.state.reason}</strong>
+          </Alert>
+        );
+      }
+
+      if(isLoading) {
+        return(<ProgressBar active now={100} label='Sending Transaction'/>);
+      }
+
+      if(isSuccess !== '') {
+        return (
+          <Alert bsStyle="success">
+            <strong>Transaction sent. TxId: {isSuccess}</strong>
+          </Alert>
+        );
+      }
+      return('');
+    }
+
     return (
       <div>
+        <Alert bsStyle="danger"><strong>Important notice!</strong> Any successful bid is non-refundable. If you get outbid your previous bids will NOT be returned.</Alert>
         <Form style={{paddingTop: '1em'}}>
           <FormGroup>
             <ControlLabel>Your Account Name (the Bidder)</ControlLabel>{' '}
@@ -123,17 +148,7 @@ export default class CreateBid extends React.Component {
           </OverlayTrigger>
         </Form>
         <div style={{paddingTop: '2em'}}>
-          {isError ? (
-            <Alert bsStyle="warning">
-              <strong>Transaction failed. {this.state.reason}</strong>
-            </Alert>
-          ) : (
-            isLoading ? (
-              <ProgressBar active now={100} label='Sending Transaction'/>
-            ) : (
-              <div/>
-            )
-          )}
+          <RenderStatus/>
         </div>
       </div>
     );
