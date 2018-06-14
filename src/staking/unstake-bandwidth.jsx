@@ -8,28 +8,20 @@ export default class AccountCreate extends React.Component {
   constructor(props, context) {
     super(props, context);
 
-    this.handleOwner = this.handleOwner.bind(this);
-    this.handleActive = this.handleActive.bind(this);
     this.handleCreator = this.handleCreator.bind(this);
     this.handleName = this.handleName.bind(this);
     this.handleNet = this.handleNet.bind(this);
     this.handleCpu = this.handleCpu.bind(this);
-    this.handleRam = this.handleRam.bind(this);
-    this.handleTransfer = this.handleTransfer.bind(this);
 
     this.state = {
       loading: false,
       error: false,
       reason: '',
       success: '',
-      owner: '',
-      active: '',
       name: '',
       creator: '',
-      net: 0.1,
-      cpu: 0.1,
-      ram: 8192,
-      transfer: true,
+      net: 0,
+      cpu: 0,
       eos: null,
       scatter:null
     };
@@ -56,22 +48,6 @@ export default class AccountCreate extends React.Component {
     }
   }
 
-  getNameValidation() {
-    const name = this.state.name;
-    let regEx = new RegExp("^([a-z1-5]){12,}$");
-    if (name.length == 12 && regEx.test(name)) return 'success'
-    else return 'error';
-    return null;
-  }
-
-  handleActive(e) {
-    this.setState({ active: e.target.value });
-  }
-
-  handleOwner(e) {
-    this.setState({ owner: e.target.value });
-  }
-
   handleName(e) {
     this.setState({ name: e.target.value });
   }
@@ -88,48 +64,15 @@ export default class AccountCreate extends React.Component {
     this.setState({ cpu: e.target.value });
   }
 
-  handleRam(e) {
-    this.setState({ ram: e.target.value });
-  }
-
-  handleTransfer(e) {
-    this.setState({ transfer: e.target.checked });
-  }
-
-  resetForm() {
-    this.setState({
-      // owner: '',
-      active: '',
-      name: '',
-      creator: '',
-      net: 0.1,
-      cpu: 0.1,
-      ram: 8192,
-      transfer: true,
-    });
-  }
-
-  createAccount(e) {
+  unstakeBandwidth(e) {
     e.preventDefault();
     this.setState({loading:true, error:false, reason:'', success:''});1
     this.state.eos.transaction(tr => {
-      tr.newaccount({
-        creator: this.state.creator,
-        name: this.state.name,
-        owner: this.state.owner,
-        active: this.state.active
-      })
-      tr.buyrambytes({
-        payer: this.state.creator,
-        receiver: this.state.name,
-        bytes: Number(this.state.ram)
-      })
-      tr.delegatebw({
+      tr.undelegatebw({
         from: this.state.creator,
         receiver: this.state.name,
-        stake_net_quantity: this.state.net + ' EOS',
-        stake_cpu_quantity: this.state.cpu + ' EOS',
-        transfer: this.state.transfer ? 1 : 0
+        unstake_net_quantity: this.state.net + ' EOS',
+        unstake_cpu_quantity: this.state.cpu + ' EOS',
       })
     }).then((data) => {
       console.log(data.transaction_id);
@@ -138,16 +81,11 @@ export default class AccountCreate extends React.Component {
       let error = JSON.stringify(e);
       this.setState({loading:false, error:true});
 
-      if(error.includes('name is already taken')) {
-        this.setState({reason:'Someone already owns that name.'});
-      } else if(error.includes('Missing required accounts')) {
+      if(error.includes('Missing required accounts')) {
         this.setState({reason:'Incorrect scatter account - please review chain id, network, and account name.'});
       }
     });
   }
-
-
-
 
   render() {
     const isError = this.state.error;
@@ -155,13 +93,14 @@ export default class AccountCreate extends React.Component {
     const isSuccess = this.state.success;
 
     const contract = (
-      <Popover id="popover-positioned-right" title="newaccount">
-      <strong>Action</strong> - {'{ newaccount }'}<br/>
+      <Popover id="popover-positioned-right" title="undelegatebw">
+      <strong>Action - {'{ undelegatebw }'}</strong><br/>
       <strong>Description</strong><br/>
-      The {'{ newaccount }'} action creates a new account.<br/>
-      <br/>
-      As an authorized party I {'{ signer }'} wish to exercise the authority of {'{ creator }'} to create a new account on this system named {'{ name }'} such that the new account's owner public key shall be {'{ owner }'} and the active public key shall be {'{ active }'}.
-
+      The intent of the {'{ undelegatebw }'} action is to unstake tokens from CPU and/or bandwidth.
+      <br/><br/>
+      As an authorized party I {'{ signer }'} wish to unstake {'{ unstake_cpu_quantity }'} from CPU and {'{ unstake_net_quantity }'} from bandwidth from the tokens owned by {'{ from }'} previously delegated for the use of delegatee {'{ to }'}.
+      <br/><br/>
+      If I as signer am not the beneficial owner of these tokens I stipulate I have proof that I’ve been authorized to take this action by their beneficial owner(s).
       </Popover>
     );
 
@@ -190,6 +129,7 @@ export default class AccountCreate extends React.Component {
 
     return (
       <div>
+        <Alert bsStyle="warning"><strong>Important notice!</strong> Unstaking takes three days. After this time has passed you can use "withdraw" below.</Alert>
 
         <Form>
           <FormGroup>
@@ -197,41 +137,23 @@ export default class AccountCreate extends React.Component {
             <FormControl
               type="text"
               value={this.state.creator}
-              placeholder="Account Name that will create the new Account"
+              placeholder="Account Name that owns the stake"
               onChange={this.handleCreator}
               disabled
             />
           </FormGroup>
-          <FormGroup validationState={this.getNameValidation()}>
+          <FormGroup>
             <ControlLabel>Account Name</ControlLabel>{' '}
             <FormControl
               type="text"
               value={this.state.name}
-              placeholder="Account Name (12 characters using a-z and 1-5 only)"
+              placeholder="Account Name that is staked (usually same as above)"
               onChange={this.handleName}
             />
             <FormControl.Feedback />
           </FormGroup>
-          <FormGroup>
-            <ControlLabel>Owner Key</ControlLabel>{' '}
-            <FormControl
-              type="text"
-              value={this.state.owner}
-              placeholder="Public key that will own the account"
-              onChange={this.handleOwner}
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Active Key</ControlLabel>{' '}
-            <FormControl
-              type="text"
-              value={this.state.active}
-              placeholder="Public key for most transactions. Can be same as owner."
-              onChange={this.handleActive}
-            />
-          </FormGroup>
           <FormGroup inline>
-            <ControlLabel>NET Stake (in EOS)</ControlLabel>{' '}
+            <ControlLabel>NET Unstake (in EOS)</ControlLabel>{' '}
             <FormControl
               type="text"
               value={this.state.net}
@@ -240,7 +162,7 @@ export default class AccountCreate extends React.Component {
             />
           </FormGroup>
           <FormGroup inline>
-            <ControlLabel>CPU Stake (in EOS)</ControlLabel>{' '}
+            <ControlLabel>CPU Unstake (in EOS)</ControlLabel>{' '}
             <FormControl
               type="text"
               value={this.state.cpu}
@@ -248,23 +170,7 @@ export default class AccountCreate extends React.Component {
               onChange={this.handleCpu}
             />
           </FormGroup>
-          <FormGroup inline>
-            <ControlLabel>RAM (in bytes)</ControlLabel>{' '}
-            <FormControl
-              type="text"
-              value={this.state.ram}
-              placeholder="How much RAM to purchase for account"
-              onChange={this.handleRam}
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Transfer </ControlLabel>{' '}
-            <Checkbox
-              checked={this.state.transfer}
-              onChange={this.handleTransfer}>Yes: Stake belongs to new Account, No: Stake belongs to Creator
-            </Checkbox>
-          </FormGroup>
-          <Button type="submit" onClick={this.createAccount.bind(this)}>Create</Button>
+          <Button type="submit" onClick={this.unstakeBandwidth.bind(this)}>Unstake</Button>
           <OverlayTrigger trigger="click" placement="right" overlay={contract}>
             <Button bsStyle="warning">Read Contract</Button>
           </OverlayTrigger>

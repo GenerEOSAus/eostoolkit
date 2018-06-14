@@ -140,7 +140,7 @@ export default class ManageProxy extends React.Component {
       if(isSuccess !== '') {
         return (
           <Alert bsStyle="success">
-            <strong>Transaction sent. TxId: {isSuccess}</strong>
+            <strong>Transaction sent. TxId: <a href={"https://eospark.com/MainNet/tx/" + isSuccess} target="new">{isSuccess}</a></strong>
           </Alert>
         );
       }

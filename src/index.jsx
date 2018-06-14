@@ -8,6 +8,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import Unlock from './unlock.jsx'
 import Tools from './tools/tools.jsx'
 import Names from './names/names.jsx'
+import Staking from './staking/staking.jsx'
 import './theme.css';
 
 const Home = () => (
@@ -37,6 +38,11 @@ class Toolkit extends React.Component {
             Tools
           </NavItem>
         </LinkContainer>
+        <LinkContainer to="/staking">
+          <NavItem>
+            Staking Management
+          </NavItem>
+        </LinkContainer>
         <LinkContainer to="/names">
           <NavItem>
             Name Auction
@@ -56,7 +62,7 @@ class Toolkit extends React.Component {
             <Route exact path="/" component={Home} />
             <Route path="/tools" component={Tools} />
             <Route path="/names" component={Names} />
-
+            <Route path="/staking" component={Staking} />
 
         <p style={{float: 'right'}}>Copywrite GenerEOS 2018 | <a href="https://www.genereos.io" target="new">Website</a> | <a href="https://github.com/genereos/eostoolkit" target="new">GitHub</a></p>
       </div>

@@ -8,13 +8,10 @@ export default class AccountCreate extends React.Component {
   constructor(props, context) {
     super(props, context);
 
-    this.handleOwner = this.handleOwner.bind(this);
-    this.handleActive = this.handleActive.bind(this);
     this.handleCreator = this.handleCreator.bind(this);
     this.handleName = this.handleName.bind(this);
     this.handleNet = this.handleNet.bind(this);
     this.handleCpu = this.handleCpu.bind(this);
-    this.handleRam = this.handleRam.bind(this);
     this.handleTransfer = this.handleTransfer.bind(this);
 
     this.state = {
@@ -22,13 +19,10 @@ export default class AccountCreate extends React.Component {
       error: false,
       reason: '',
       success: '',
-      owner: '',
-      active: '',
       name: '',
       creator: '',
-      net: 0.1,
-      cpu: 0.1,
-      ram: 8192,
+      net: 0,
+      cpu: 0,
       transfer: true,
       eos: null,
       scatter:null
@@ -56,22 +50,6 @@ export default class AccountCreate extends React.Component {
     }
   }
 
-  getNameValidation() {
-    const name = this.state.name;
-    let regEx = new RegExp("^([a-z1-5]){12,}$");
-    if (name.length == 12 && regEx.test(name)) return 'success'
-    else return 'error';
-    return null;
-  }
-
-  handleActive(e) {
-    this.setState({ active: e.target.value });
-  }
-
-  handleOwner(e) {
-    this.setState({ owner: e.target.value });
-  }
-
   handleName(e) {
     this.setState({ name: e.target.value });
   }
@@ -88,42 +66,14 @@ export default class AccountCreate extends React.Component {
     this.setState({ cpu: e.target.value });
   }
 
-  handleRam(e) {
-    this.setState({ ram: e.target.value });
-  }
-
   handleTransfer(e) {
     this.setState({ transfer: e.target.checked });
   }
 
-  resetForm() {
-    this.setState({
-      // owner: '',
-      active: '',
-      name: '',
-      creator: '',
-      net: 0.1,
-      cpu: 0.1,
-      ram: 8192,
-      transfer: true,
-    });
-  }
-
-  createAccount(e) {
+  stakeBandwidth(e) {
     e.preventDefault();
     this.setState({loading:true, error:false, reason:'', success:''});1
     this.state.eos.transaction(tr => {
-      tr.newaccount({
-        creator: this.state.creator,
-        name: this.state.name,
-        owner: this.state.owner,
-        active: this.state.active
-      })
-      tr.buyrambytes({
-        payer: this.state.creator,
-        receiver: this.state.name,
-        bytes: Number(this.state.ram)
-      })
       tr.delegatebw({
         from: this.state.creator,
         receiver: this.state.name,
@@ -138,16 +88,11 @@ export default class AccountCreate extends React.Component {
       let error = JSON.stringify(e);
       this.setState({loading:false, error:true});
 
-      if(error.includes('name is already taken')) {
-        this.setState({reason:'Someone already owns that name.'});
-      } else if(error.includes('Missing required accounts')) {
+      if(error.includes('Missing required accounts')) {
         this.setState({reason:'Incorrect scatter account - please review chain id, network, and account name.'});
       }
     });
   }
-
-
-
 
   render() {
     const isError = this.state.error;
@@ -155,14 +100,18 @@ export default class AccountCreate extends React.Component {
     const isSuccess = this.state.success;
 
     const contract = (
-      <Popover id="popover-positioned-right" title="newaccount">
-      <strong>Action</strong> - {'{ newaccount }'}<br/>
+      <Popover id="popover-positioned-right" title="undelegatebw">
+      <strong>Action - {'{ delegatebw }'}</strong><br/>
       <strong>Description</strong><br/>
-      The {'{ newaccount }'} action creates a new account.<br/>
-      <br/>
-      As an authorized party I {'{ signer }'} wish to exercise the authority of {'{ creator }'} to create a new account on this system named {'{ name }'} such that the new account's owner public key shall be {'{ owner }'} and the active public key shall be {'{ active }'}.
-
-      </Popover>
+      The intent of the {'{ delegatebw }'} action is to stake tokens for bandwidth and/or CPU and optionally transfer ownership.
+<br/><br/>
+      As an authorized party I {'{ signer }'} wish to stake {'{ stake_cpu_quantity }'} for CPU and {'{ stake_net_quantity }'} for bandwidth from the liquid tokens of {'{ from }'} for the use of delegatee {'{ to }'}.
+<br/><br/>
+      {'{if transfer }'}<br/>
+      It is {'{ transfer }'} that I wish these tokens to become immediately owned by the delegatee.
+<br/><br/>
+      {'{/if}'}<br/>
+      As signer I stipulate that, if I am not the beneficial owner of these tokens, I have proof that I’ve been authorized to take this action by their beneficial owner(s).</Popover>
     );
 
     const RenderStatus = () => {
@@ -193,42 +142,24 @@ export default class AccountCreate extends React.Component {
 
         <Form>
           <FormGroup>
-            <ControlLabel>Creator Name (Must be linked to your Scatter)</ControlLabel>{' '}
+            <ControlLabel>Owner Account Name (Must be linked to your Scatter)</ControlLabel>{' '}
             <FormControl
               type="text"
               value={this.state.creator}
-              placeholder="Account Name that will create the new Account"
+              placeholder="Account Name that provides the stake"
               onChange={this.handleCreator}
               disabled
             />
           </FormGroup>
-          <FormGroup validationState={this.getNameValidation()}>
-            <ControlLabel>Account Name</ControlLabel>{' '}
+          <FormGroup>
+            <ControlLabel>Target Account Name</ControlLabel>{' '}
             <FormControl
               type="text"
               value={this.state.name}
-              placeholder="Account Name (12 characters using a-z and 1-5 only)"
+              placeholder="Account Name that will get staked (usually same as above)"
               onChange={this.handleName}
             />
             <FormControl.Feedback />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Owner Key</ControlLabel>{' '}
-            <FormControl
-              type="text"
-              value={this.state.owner}
-              placeholder="Public key that will own the account"
-              onChange={this.handleOwner}
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Active Key</ControlLabel>{' '}
-            <FormControl
-              type="text"
-              value={this.state.active}
-              placeholder="Public key for most transactions. Can be same as owner."
-              onChange={this.handleActive}
-            />
           </FormGroup>
           <FormGroup inline>
             <ControlLabel>NET Stake (in EOS)</ControlLabel>{' '}
@@ -248,23 +179,14 @@ export default class AccountCreate extends React.Component {
               onChange={this.handleCpu}
             />
           </FormGroup>
-          <FormGroup inline>
-            <ControlLabel>RAM (in bytes)</ControlLabel>{' '}
-            <FormControl
-              type="text"
-              value={this.state.ram}
-              placeholder="How much RAM to purchase for account"
-              onChange={this.handleRam}
-            />
-          </FormGroup>
           <FormGroup>
             <ControlLabel>Transfer </ControlLabel>{' '}
             <Checkbox
               checked={this.state.transfer}
-              onChange={this.handleTransfer}>Yes: Stake belongs to new Account, No: Stake belongs to Creator
+              onChange={this.handleTransfer}>Yes: Stake belongs to Target Account, No: Stake belongs to Owner
             </Checkbox>
           </FormGroup>
-          <Button type="submit" onClick={this.createAccount.bind(this)}>Create</Button>
+          <Button type="submit" onClick={this.stakeBandwidth.bind(this)}>Stake</Button>
           <OverlayTrigger trigger="click" placement="right" overlay={contract}>
             <Button bsStyle="warning">Read Contract</Button>
           </OverlayTrigger>

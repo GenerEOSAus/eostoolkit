@@ -35,7 +35,7 @@ export default class Unlock extends React.Component {
 
   render() {
     return (
-      <div><strong>Unlock Tracker:</strong> {(this.state.total_vote/10000/1000000).toFixed(3)} M of 150.0 M votes complete. {((this.state.total_vote/10000/1000000/150)*100).toFixed(1)}% of the way there!</div>
+      <div><strong>Mainnet UNLOCK! Way to go Everyone!:</strong> {(this.state.total_vote/10000/1000000).toFixed(3)} M of 150.0 M votes complete. {((this.state.total_vote/10000/1000000/150)*100).toFixed(1)}% of the way there!</div>
     );
   }
 }
