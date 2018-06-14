@@ -28,6 +28,17 @@ export function EosClient() {
   return window.scatter.eos(network,Eos,eosOptions,'https');
 }
 
+export const bindNameToState = (stateSetter, paramArray) => {
+    const name = window.scatter.identity && window.scatter.identity.accounts.find(x => x.blockchain === 'eos')
+        ? window.scatter.identity.accounts.find(x => x.blockchain === 'eos').name
+        : '';
+
+  stateSetter(paramArray.reduce((acc, param) => {
+    acc[param] = name;
+    return acc;
+  }, {}));
+}
+
 export class ScatterConnect extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -52,16 +63,13 @@ export class ScatterConnect extends React.Component {
   }
 
   connectIdentity() {
-    this.state.scatter.suggestNetwork(httpNetwork).then(() => {
-      console.log('Network attached');
-      this.state.scatter.getIdentity().then(() => {
-        console.log('Attach Identity');
-        console.log(this.state.scatter.identity);
-        this.setState({identity: window.scatter.identity});
+      this.state.scatter.getIdentity({accounts:[{chainId:network.chainId, blockchain:network.blockchain}]}).then(() => {
+          console.log('Attach Identity');
+          console.log(this.state.scatter.identity);
+          this.setState({identity: window.scatter.identity});
       }).catch(error => {
-        console.error(error);
+          console.error(error);
       });
-    });
   }
 
   removeIdentity() {
