@@ -130,7 +130,7 @@ export default class AccountCreate extends React.Component {
     return (
       <div>
         <Alert bsStyle="warning"><strong>Important notice!</strong> Unstaking takes three days. After this time has passed you can use "withdraw" below.</Alert>
-
+        <Alert bsStyle="danger"><strong>Your vote goes away!</strong> After unstaking your vote no longer has weight. Please keep this in mind - Please stake and vote!</Alert>
         <Form>
           <FormGroup>
             <ControlLabel>Creator Name (Must be linked to your Scatter)</ControlLabel>{' '}
