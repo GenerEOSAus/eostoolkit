@@ -53,8 +53,8 @@ class Toolkit extends React.Component {
           </Panel.Heading>
           <Panel.Body><ScatterConnect/></Panel.Body>
         </Panel>
-            <Route exact path="/" component={Home} />
-            <Route path="/tools" component={Tools} />
+            {/*<Route exact path="/" component={Home} />*/}
+            <Route path="/" component={Tools} />
             <Route path="/names" component={Names} />
 
 

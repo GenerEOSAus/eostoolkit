@@ -1,7 +1,7 @@
 import React from 'react'
 import update from 'react-addons-update';
 import { Grid, Row, Col, Panel, Form, FormGroup, FormControl, ControlLabel, HelpBlock,ListGroup,ListGroupItem, Button, ProgressBar, Alert, Table, OverlayTrigger,Popover } from 'react-bootstrap';
-import { EosClient } from '../scatter-client.jsx';
+import { EosClient, bindNameToState } from '../scatter-client.jsx';
 
 export default class ManageProxy extends React.Component {
   constructor(props, context) {
@@ -27,6 +27,10 @@ export default class ManageProxy extends React.Component {
       console.log('Scatter connected')
       let client = EosClient();
       this.setState({ eos: client});
+
+      setInterval(() => {
+        bindNameToState(this.setState.bind(this), ['regProxy', 'setName']);
+      }, 1000)
     });
   }
 
@@ -154,6 +158,7 @@ export default class ManageProxy extends React.Component {
               placeholder="Account Name - Linked to Scatter"
               onChange={this.handleRegProxy}
               style={{width: '70%'}}
+              disabled
             />
           </FormGroup>{' '}
           <Button type="submit" onClick={this.regProxy.bind(this)}>Become Proxy</Button>
@@ -171,6 +176,7 @@ export default class ManageProxy extends React.Component {
               placeholder="Account Name - Linked to Scatter"
               onChange={this.handleSetName}
               style={{width: '70%'}}
+              disabled
             />
           </FormGroup>{' '}<br/><br/>
           <FormGroup style={{width: '70%'}}>

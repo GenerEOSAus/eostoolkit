@@ -2,7 +2,7 @@ import React from 'react'
 import update from 'react-addons-update';
 import Eos from 'eosjs'
 import { Grid, Row, Col, Panel, Form, FormGroup, FormControl, ControlLabel, HelpBlock,ListGroup,ListGroupItem, Button, ProgressBar, Alert, Table, Checkbox,Popover,OverlayTrigger } from 'react-bootstrap';
-import { EosClient } from '../scatter-client.jsx';
+import { EosClient, bindNameToState } from '../scatter-client.jsx';
 
 export default class AccountCreate extends React.Component {
   constructor(props, context) {
@@ -30,7 +30,8 @@ export default class AccountCreate extends React.Component {
       cpu: 0.1,
       ram: 8192,
       transfer: true,
-      eos: null
+      eos: null,
+      scatter:null
     };
 
 
@@ -38,6 +39,13 @@ export default class AccountCreate extends React.Component {
       console.log('Scatter connected')
       let client = EosClient();
       this.setState({ eos: client});
+
+      setInterval(() => {
+        bindNameToState(this.setState.bind(this), ['creator']);
+      }, 1000)
+
+
+
     });
   }
 
@@ -89,7 +97,7 @@ export default class AccountCreate extends React.Component {
 
   resetForm() {
     this.setState({
-      owner: '',
+      // owner: '',
       active: '',
       name: '',
       creator: '',
@@ -190,6 +198,7 @@ export default class AccountCreate extends React.Component {
               value={this.state.creator}
               placeholder="Account Name that will create the new Account"
               onChange={this.handleCreator}
+              disabled
             />
           </FormGroup>
           <FormGroup validationState={this.getNameValidation()}>
