@@ -37,6 +37,7 @@ export default class ManageProxy extends React.Component {
   componentDidMount() {
     if(window.scatter !== undefined) {
       this.setState({ eos: EosClient()});
+      bindNameToState(this.setState.bind(this), ['regProxy', 'setName']);
     }
   }
 

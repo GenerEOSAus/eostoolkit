@@ -1,7 +1,7 @@
 import React from 'react'
 import update from 'react-addons-update';
 import { Grid, Row, Col, Panel, Form, FormGroup, FormControl, ControlLabel, HelpBlock,ListGroup,ListGroupItem, Button, ProgressBar, Alert, Table, Popover, OverlayTrigger } from 'react-bootstrap';
-import { EosClient } from '../scatter-client.jsx';
+import { EosClient, bindNameToState } from '../scatter-client.jsx';
 
 export default class CreateBid extends React.Component {
   constructor(props, context) {
@@ -26,12 +26,17 @@ export default class CreateBid extends React.Component {
       console.log('Scatter connected')
       let client = EosClient();
       this.setState({ eos: client});
+
+      setInterval(() => {
+        bindNameToState(this.setState.bind(this), ['bidder']);
+      }, 1000);
     });
   }
 
   componentDidMount() {
     if(window.scatter !== undefined) {
       this.setState({ eos: EosClient()});
+      bindNameToState(this.setState.bind(this), ['bidder']);
     }
   }
 
@@ -122,6 +127,7 @@ export default class CreateBid extends React.Component {
               value={this.state.bidder}
               placeholder="Account Name - Linked to Scatter"
               onChange={this.handleBidder}
+              disabled
             />
           </FormGroup>
           <FormGroup>

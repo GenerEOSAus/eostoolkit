@@ -52,6 +52,7 @@ export default class AccountCreate extends React.Component {
   componentDidMount() {
     if(window.scatter !== undefined) {
       this.setState({ eos: EosClient()});
+      bindNameToState(this.setState.bind(this), ['creator']);
     }
   }
 
