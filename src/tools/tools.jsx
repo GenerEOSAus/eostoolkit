@@ -34,7 +34,7 @@ export default class Tools extends React.Component {
         </Panel>
         <Panel bsStyle="primary">
           <Panel.Heading>
-            <Panel.Title componentClass="h3">Buy/Sell RAM</Panel.Title>
+            <Panel.Title componentClass="h3">Buy/Sell RAM - Thanks EOSNation for Contributing</Panel.Title>
           </Panel.Heading>
           <Panel.Body><BuySellRam/></Panel.Body>
         </Panel>
