@@ -3,6 +3,7 @@ import { Panel } from 'react-bootstrap';
 import AccountLookup from './account-lookup.jsx'
 import AccountCreate from './account-create.jsx'
 import ManageProxy from './manage-proxy.jsx'
+import BuySellRam from './buy-sell-ram.jsx'
 import VoteGenereos from './vote-genereos.jsx'
 
 export default class Tools extends React.Component {
@@ -30,6 +31,12 @@ export default class Tools extends React.Component {
             <Panel.Title componentClass="h3">Proxy Management</Panel.Title>
           </Panel.Heading>
           <Panel.Body><ManageProxy/></Panel.Body>
+        </Panel>
+        <Panel bsStyle="primary">
+          <Panel.Heading>
+            <Panel.Title componentClass="h3">Buy/Sell RAM</Panel.Title>
+          </Panel.Heading>
+          <Panel.Body><BuySellRam/></Panel.Body>
         </Panel>
         <Panel bsStyle="primary">
           <Panel.Heading>
