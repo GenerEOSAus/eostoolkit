@@ -11,12 +11,12 @@ export default class Names extends React.Component {
   render() {
     return (
       <div>
-        <Panel bsStyle="primary">
-          <Panel.Heading>
-            <Panel.Title componentClass="h3">Bid on Premium Names</Panel.Title>
-          </Panel.Heading>
-          <Panel.Body><CreateBid/></Panel.Body>
-        </Panel>
+      <Panel bsStyle="primary">
+        <Panel.Heading>
+          <Panel.Title componentClass="h3">Bid on Premium Names</Panel.Title>
+        </Panel.Heading>
+        <Panel.Body><CreateBid/></Panel.Body>
+      </Panel>
         <BidTable/>
       </div>
     );
